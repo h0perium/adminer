@@ -1,33 +1,34 @@
-# Adminer 5.4.2 (stable) + default DB drivers + MongoDB + Firebird
+# Universal Adminer Docker Container
 
-## Why you saw the MySQL extension error
-Adminer can only connect to a DB system if the corresponding PHP extension exists. If no MySQL extension is loaded, Adminer shows:
-> None of the supported PHP extensions (MySQLi, MySQL, PDO_MySQL) are available.
+A lightweight, all-in-one Docker image for [Adminer](https://www.adminer.org/) with support for multiple databases.  
+Includes PHP-FPM, Nginx, and PHP extensions for MySQL/MariaDB, PostgreSQL, SQLite, SQL Server (via FreeTDS), MongoDB, Redis, and optional Firebird.  
+PHP-FPM uses a Unix socket for fast internal communication.
 
-This image includes the default DB extensions:
-- mysqli + pdo_mysql
-- pdo_pgsql
-- pdo_sqlite
-- pdo_odbc
-- pdo_dblib
-- pdo_firebird
+---
 
-Plus:
-- mongodb (PECL) + the Adminer MongoDB driver plugin
-- Firebird (PDO) custom driver plugin for dropdown
+## Features
+
+- PHP 8.2 FPM + Nginx
+- Unix socket (`.sock`) between Nginx and PHP-FPM (efficient, no TCP overhead)
+- Supports multiple databases:
+  - MySQL / MariaDB (`pdo_mysql`)
+  - PostgreSQL (`pdo_pgsql`)
+  - SQLite (`pdo_sqlite`)
+  - SQL Server (`pdo_dblib` / FreeTDS)
+  - MongoDB (PECL)
+  - Redis (PECL)
+  - Optional Firebird (`pdo_firebird`)
+- Adminer plugins automatically included:
+  - MySQL, PostgreSQL, SQLite, MongoDB, Firebird
+- Lightweight and fully Alpine-based
+
+---
 
 ## Build
-```bash
-docker build -t adminer-full:5.4.2 .
-```
 
-## Run
-```bash
-# safer for testing (avoid conflicting with existing services on port 80)
-docker run -d --name adminer -p 8080:80 adminer-full:5.4.2
-```
+Clone this repository (or copy the Dockerfile) and build the image:
 
-## Verify
 ```bash
-docker exec -it adminer php -m | egrep 'mysqli|pdo_mysql|pdo_pgsql|pdo_sqlite|pdo_dblib|pdo_odbc|pdo_firebird|mongodb'
-```
+git clone https://github.com/h0perium/adminer.git
+cd adminer
+docker build -t adminer-universal .
